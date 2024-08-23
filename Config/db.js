@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const connectDB = async () => {
     try {
         await mongoose.connect('mongodb+srv://tecnaviswebsolutions:lPluqHGaRKMn6Zl6@lms.7iedft2.mongodb.net/?retryWrites=true&w=majority&appName=LMS');
