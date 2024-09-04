@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const studentController = require('../Controller/studentsController');
 var multer = require('multer')
+const path = require('path');
+const fs = require('fs');
+const XLSX = require('xlsx')
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
