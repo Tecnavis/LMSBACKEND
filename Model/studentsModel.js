@@ -19,7 +19,7 @@ const studentSchema = new mongoose.Schema({
     maritalStatus: { type: String  },
     academicQualification: { type: String  },
     mobileNumber: { type: Number  },
-    parentsMobileNumber: { type: Number  },
+    parentsMobileNumber: { type: String ,default: null,},
     email: { type: String  },
     courseName: {  type: String},
     joinDate: { type: Date  },
