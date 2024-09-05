@@ -360,3 +360,9 @@ exports.updateStudentBalance = async (req, res) => {
     res.status(500).json({ message: "Error updating student balance", error });
   }
 };
+
+
+// if (parentsMobileNumber && !isValidMobileNumber(parentsMobileNumber)) {
+//     return res.status(400).json({
+//       message: "Invalid parents' mobile number. Must be a 10-digit number.",
+//     });
