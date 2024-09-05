@@ -44,9 +44,9 @@ exports.delete = asyncHandler(async (req, res) => {
 //     console.log(`Fetching transaction with ID: ${req.params.id}`);
 //     const {id} = req.params;
 //     try {
-//         const payment = await PaymentModel.findById(id).populate("student");
+//         const payment = await PaymentModel.find({students:id}).populate("students");
 //         if (!payment) return res.status(404).json({ message: "Payment not found" });
-//         res.status(200).json({ payment });
+//         res.status(200).json({payments: payment });
 //     } catch (error) {
 //         res.status(500).json({ message: error.message });
 //     }

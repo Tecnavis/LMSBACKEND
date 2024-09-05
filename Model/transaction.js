@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const transactionSchema = new mongoose.Schema({
-//   student: { type: mongoose.Schema.Types.ObjectId, ref: 'Student',},
   receiptNumber: { type: String, required: true },
+//   students:{ type: mongoose.Schema.Types.ObjectId, ref: 'Student',},
   referenceNumber: { type: String },
   date: { type: Date, required: true },
   name: { type: String, required: true },
