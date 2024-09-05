@@ -10,6 +10,8 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var studentsRouter = require('./routes/studentsRoutes');
 var courseRouter = require('./routes/courseRoute')
+var adminRouter = require('./routes/admin')
+var transactionRouter = require('./routes/transaction')
 
 var app = express();
 connectDB()
@@ -30,6 +32,8 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/students', studentsRouter);
 app.use('/course',courseRouter)
+app.use('/admin',adminRouter)
+app.use('/transaction',transactionRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
