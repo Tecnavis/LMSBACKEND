@@ -139,85 +139,64 @@ exports.updateStudent = async (req, res) => {
     const updatedData = req.body;
 
     // Validate mobile number if provided
-    let mobileNumber = updatedData.mobileNumber
-      ? updatedData.mobileNumber.trim()
-      : null;
-    if (mobileNumber && !isValidMobileNumber(mobileNumber)) {
-      return res
-        .status(400)
-        .json({ message: "Invalid mobile number. Must be a 10-digit number." });
-    }
+    let mobileNumber = updatedData.mobileNumber ? updatedData.mobileNumber.trim() : null;
 
     // Validate parents' mobile number if provided
     let parentsMobileNumber = updatedData.parentsMobileNumber
       ? updatedData.parentsMobileNumber.trim()
       : null;
-    if (parentsMobileNumber && !isValidMobileNumber(parentsMobileNumber)) {
-      return res.status(400).json({
-        message: "Invalid parents' mobile number. Must be a 10-digit number.",
-      });
+ 
+    if (mobileNumber && !isValidMobileNumber(mobileNumber)) {
+      return res.status(400).json({ message: "Invalid mobile number. Must be a 10-digit number." });
     }
 
     // Check if mobile number already exists
     if (mobileNumber) {
-      const existingStudent = await Student.findOne({
-        mobileNumber,
-        _id: { $ne: req.params.id },
-      });
+      const existingStudent = await Student.findOne({ mobileNumber, _id: { $ne: req.params.id } });
       if (existingStudent) {
-        return res.status(400).json({ message: "Mobile number already used." });
+        return res.status(401).json({ message: "Mobile number already used." });
       }
     }
 
-    // Check if parents' mobile number already exists
-    if (parentsMobileNumber) {
-      const existingParent = await Student.findOne({
-        parentsMobileNumber,
-        _id: { $ne: req.params.id },
-      });
-      if (existingParent) {
-        return res
-          .status(400)
-          .json({ message: "Parents' mobile number already used." });
-      }
+    // Sanitize joinDate
+    if (updatedData.joinDate === 'null' || !Date.parse(updatedData.joinDate)) {
+      updatedData.joinDate = null;
+    } else {
+      updatedData.joinDate = new Date(updatedData.joinDate);
     }
 
-    // Assign file paths to corresponding fields if files are provided
-    if (req.files.image) {
-      updatedData.image = req.files["image"]
-        ? req.files["image"][0].filename
-        : undefined;
-    }
-    if (req.files.guardianId) {
-      updatedData.guardianId = req.files["guardianId"]
-        ? req.files["guardianId"][0].filename
-        : undefined;
-    }
-    if (req.files.studentId) {
-      updatedData.studentId = req.files["studentId"]
-        ? req.files["studentId"][0].filename
-        : undefined;
+    // Handle file uploads
+    if (req.files) {
+      if (req.files.image) {
+        updatedData.image = req.files['image'][0].filename;
+      }
+      if (req.files.guardianId) {
+        updatedData.guardianId = req.files['guardianId'][0].filename;
+      }
+      if (req.files.studentId) {
+        updatedData.studentId = req.files['studentId'][0].filename;
+      }
     }
 
     // Update age if dateOfBirth is provided
     if (updatedData.dateOfBirth) {
-      updatedData.age = calculateAge(updatedData.dateOfBirth);
+      updatedData.age = parseInt(calculateAge(updatedData.dateOfBirth), 10);
     }
 
     // Update student in the database
-    const updatedStudent = await Student.findByIdAndUpdate(
-      req.params.id,
-      updatedData,
-      { new: true }
-    );
-    if (!updatedStudent)
-      return res.status(404).json({ message: "Student not found" });
+    const updatedStudent = await Student.findByIdAndUpdate(req.params.id, updatedData, { new: true });
+    if (!updatedStudent) return res.status(404).json({ message: 'Student not found' });
 
     res.status(200).json(updatedStudent);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.error('Update student error:', err);
+    res.status(500).json({ message: err.message });
   }
 };
+
+
+
+
 
 // Delete a student
 exports.deleteStudent = async (req, res) => {

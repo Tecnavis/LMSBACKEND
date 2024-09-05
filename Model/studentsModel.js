@@ -19,7 +19,7 @@ const studentSchema = new mongoose.Schema({
     maritalStatus: { type: String  },
     academicQualification: { type: String  },
     mobileNumber: { type: Number  },
-    parentsMobileNumber: { type: Number  },
+    parentsMobileNumber: { type: String ,default: null,},
     email: { type: String  },
     courseName: {  type: String},
     joinDate: { type: Date  },
@@ -36,28 +36,6 @@ studentSchema.pre('save', async function(next) {
         const salt = await bcrypt.genSalt(10);
         student.password = await bcrypt.hash(student.password, salt);
     }
-
-    // Convert name and guardianName to uppercase
-    if (student.isModified('name')) {
-        student.name = student.name.toUpperCase();
-    }
-
-    if (student.isModified('guardianName')) {
-        student.guardianName = student.guardianName.toUpperCase();
-    }
-
-    // Format fullAddress: First letter capitalized, rest lowercased
-    if (student.isModified('fullAddress')) {
-        student.fullAddress = student.fullAddress.split(' ').map(word => 
-            word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        ).join(' ');
-    }
-
-    // Convert email to lowercase
-    if (student.isModified('email')) {
-        student.email = student.email.toLowerCase();
-    }
-
     next();
 });
 
