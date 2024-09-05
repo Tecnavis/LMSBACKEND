@@ -68,12 +68,9 @@ exports.createStudent = async (req, res) => {
     // Convert mobile number to number
     const mobileNumberAsNumber = Number(mobileNumber);
     if (isNaN(mobileNumberAsNumber) || !isValidMobileNumber(mobileNumber)) {
-      return res
-        .status(400)
-        .json({
-          message:
-            "Student mobile number is invalid. Must be a 10-digit number.",
-        });
+      return res.status(400).json({
+        message: "Student mobile number is invalid. Must be a 10-digit number.",
+      });
     }
 
     // Validate parents' mobile number
@@ -81,11 +78,9 @@ exports.createStudent = async (req, res) => {
       ? studentData.parentsMobileNumber.trim()
       : null;
     if (parentsMobileNumber && !isValidMobileNumber(parentsMobileNumber)) {
-      return res
-        .status(400)
-        .json({
-          message: "Invalid parents' mobile number. Must be a 10-digit number.",
-        });
+      return res.status(400).json({
+        message: "Invalid parents' mobile number. Must be a 10-digit number.",
+      });
     }
 
     // Check if mobile number already exists
@@ -146,6 +141,11 @@ exports.updateStudent = async (req, res) => {
     // Validate mobile number if provided
     let mobileNumber = updatedData.mobileNumber ? updatedData.mobileNumber.trim() : null;
 
+    // Validate parents' mobile number if provided
+    let parentsMobileNumber = updatedData.parentsMobileNumber
+      ? updatedData.parentsMobileNumber.trim()
+      : null;
+ 
     if (mobileNumber && !isValidMobileNumber(mobileNumber)) {
       return res.status(400).json({ message: "Invalid mobile number. Must be a 10-digit number." });
     }
@@ -317,5 +317,25 @@ exports.uploadExcel = async (req, res) => {
   } catch (error) {
     console.error("Error in uploadExcel:", error);
     res.status(500).send("An error occurred while uploading the file.");
+  }
+};
+//updating Course Fee
+exports.updateStudentBalance = async (req, res) => {
+  const { name } = req.params;
+  const { balance } = req.body;
+
+  try {
+    const student = await Student.findOne({ name });
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    student.courseFee = balance;
+    await student.save();
+
+    res.status(200).json({ message: "Student balance updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Error updating student balance", error });
   }
 };
