@@ -37,5 +37,6 @@ router.post('/', upload.fields([{ name: 'image', maxCount: 1 },{ name: 'guardian
 router.put('/:id',  upload.fields([{ name: 'image', maxCount: 1 },{ name: 'guardianId', maxCount: 1 },{ name: 'studentId', maxCount: 1 }]),studentController.updateStudent);
 router.delete('/:id', studentController.deleteStudent);
 router.post('/signin',studentController.signInStudent)
+router.patch('/:name',studentController.updateStudentBalance);
 
 module.exports = router;
