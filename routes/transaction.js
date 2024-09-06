@@ -16,5 +16,6 @@ router.get('/last-receipt-number', async (req, res) => {
 router.post('/',Controller.create)
 router.get('/',Controller.getAll)
 router.delete('/:id',Controller.delete)
-// router.get('/:id',Controller.getById)
+router.get('/student/:studentId', Controller.getTransactionsByStudent);
+router.delete('/',Controller.deleteAll)
 module.exports = router;

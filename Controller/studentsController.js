@@ -321,21 +321,21 @@ exports.uploadExcel = async (req, res) => {
 };
 //updating Course Fee
 exports.updateStudentBalance = async (req, res) => {
-  const { name } = req.params;
+  const { id } = req.params;
   const { balance } = req.body;
-
   try {
-    const student = await Student.findOne({ name });
-
+    const student = await Student.findById(id);
     if (!student) {
       return res.status(404).json({ message: "Student not found" });
     }
-
+    // Update balance and courseFee
+    student.balance = balance;
     student.courseFee = balance;
     await student.save();
-
-    res.status(200).json({ message: "Student balance updated successfully" });
+    res.status(200).json({ message: "Student balance and course fee updated successfully" });
   } catch (error) {
+    console.error('Error updating student balance:', error);
     res.status(500).json({ message: "Error updating student balance", error });
   }
 };
+
