@@ -5,6 +5,7 @@ var multer = require('multer')
 const path = require('path');
 const fs = require('fs');
 const XLSX = require('xlsx')
+const Authentication = require('../middleware/verifyToken')
 
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,12 +32,12 @@ var upload = multer({
     }
 });
 
-router.get('/', studentController.getAllStudents);
-router.get('/:id', studentController.getStudentById);
-router.post('/', upload.fields([{ name: 'image', maxCount: 1 },{ name: 'guardianId', maxCount: 1 },{ name: 'studentId', maxCount: 1 }]),studentController.createStudent);
-router.put('/:id',  upload.fields([{ name: 'image', maxCount: 1 },{ name: 'guardianId', maxCount: 1 },{ name: 'studentId', maxCount: 1 }]),studentController.updateStudent);
-router.delete('/:id', studentController.deleteStudent);
-router.post('/signin',studentController.signInStudent)
-router.patch('/:id',studentController.updateStudentBalance);
+router.get('/',Authentication, studentController.getAllStudents);
+router.get('/:id',Authentication, studentController.getStudentById);
+router.post('/',Authentication, upload.fields([{ name: 'image', maxCount: 1 },{ name: 'guardianId', maxCount: 1 },{ name: 'studentId', maxCount: 1 }]),studentController.createStudent);
+router.put('/:id', Authentication, upload.fields([{ name: 'image', maxCount: 1 },{ name: 'guardianId', maxCount: 1 },{ name: 'studentId', maxCount: 1 }]),studentController.updateStudent);
+router.delete('/:id',Authentication, studentController.deleteStudent);
+router.post('/signin',Authentication,studentController.signInStudent)
+router.patch('/:id',Authentication,studentController.updateStudentBalance);
 
 module.exports = router;

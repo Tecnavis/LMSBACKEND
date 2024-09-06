@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const Controller = require('../Controller/attendance');
+const Authentication = require('../middleware/verifyToken')
 
 // Route to save or update attendance
 // router.post('/', Controller.saveAttendance);
 
 // Route to get all attendance records
-router.get('/', Controller.getAll);
+router.get('/', Authentication, Controller.getAll);
 
 // Route to delete attendance record
 router.delete('/:id', Controller.delete);
