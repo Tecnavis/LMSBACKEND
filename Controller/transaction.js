@@ -6,9 +6,6 @@ exports.create = asyncHandler(async (req, res) => {
         console.log('Received data:', req.body); // Log the data received from frontend
 
         const { students,receiptNumber, referenceNumber, date, name, balance, payAmount, modeOfPayment } = req.body;
-
-        // Add any necessary validation or transformation here
-
         const payment = await PaymentModel.create({students, receiptNumber, referenceNumber, date, name, balance, payAmount, modeOfPayment });
         res.status(201).json(payment);
     } catch (error) {

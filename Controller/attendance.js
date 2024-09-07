@@ -82,3 +82,34 @@ exports.updateAttendance = async (req, res) => {
 };
 
 
+//get monthly records for all student
+
+exports.getMonthlyAttendance = async (req, res) => {
+    const { studentId, month, year } = req.params;
+  
+    // Ensure that the year and month are valid
+    const parsedYear = Number(year);
+    const parsedMonth = Number(month);
+  
+    if (isNaN(parsedYear) || isNaN(parsedMonth) || parsedMonth < 1 || parsedMonth > 12) {
+      return res.status(400).json({ message: 'Invalid year or month' });
+    }
+  
+    try {
+        // Adjust date range for the query
+        const startDate = new Date(parsedYear, parsedMonth - 1, 1); // First day of the month
+        const endDate = new Date(parsedYear, parsedMonth, 1); // First day of the next month
+  
+        const attendanceRecords = await Attendance.find({
+          date: { $gte: startDate, $lt: endDate } // Date range filter
+        })
+        .populate('students', 'name') // Populate student details
+        .exec();
+  
+        res.status(200).json({ attendanceRecords });
+    } catch (error) {
+        console.error('Error fetching monthly attendance records:', error);
+        res.status(500).json({ message: 'Error fetching monthly attendance records' });
+    }
+  };
+  
