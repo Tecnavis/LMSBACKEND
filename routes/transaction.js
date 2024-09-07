@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 const Controller = require('../Controller/transaction')
 const PaymentModel = require('../Model/transaction')
+const Authentication = require('../middleware/verifyToken')
 
 // route to get the last receipt number
 router.get('/last-receipt-number', async (req, res) => {
@@ -13,8 +14,9 @@ router.get('/last-receipt-number', async (req, res) => {
     }
 });
 
-router.post('/',Controller.create)
+router.post('/',Authentication,Controller.create)
 router.get('/',Controller.getAll)
 router.delete('/:id',Controller.delete)
-// router.get('/:id',Controller.getById)
+router.get('/student/:studentId', Controller.getTransactionsByStudent);
+router.delete('/',Controller.deleteAll)
 module.exports = router;
