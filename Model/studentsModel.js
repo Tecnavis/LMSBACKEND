@@ -21,7 +21,7 @@ const studentSchema = new mongoose.Schema({
     mobileNumber: { type: Number  },
     parentsMobileNumber: { type: String ,default: null,},
     email: { type: String  },
-    courseName: {  type: String},
+    courseName: {  type: mongoose.Schema.Types.ObjectId, ref: 'course'},
     joinDate: { type: Date  },
     courseFee: { type: Number  },
     guardianId: { type: String  },
