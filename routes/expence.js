@@ -18,4 +18,5 @@ router.get('/',Controller.getAll)
 router.get('/:id',Controller.getExpenceById)
 router.put('/:id',upload.single("image"),Controller.updateExpence)
 router.delete('/:id',Controller.delete)
+router.get('/summary/monthly', Controller.getMonthlyExpenses);
 module.exports = router;

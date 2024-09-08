@@ -5,7 +5,7 @@ const Authentication = require('../middleware/verifyToken')
 
 
 // Route to get all attendance records
-router.get('/',Authentication, Controller.getAll);
+router.get('/', Controller.getAll);
 
 // Route to delete attendance record
 router.delete('/:id', Controller.delete);
@@ -24,4 +24,9 @@ router.post('/', Controller.updateAttendance);
 
 //Route to get monthly records for all student
 router.get('/:month/:year', Controller.getMonthlyAttendance);
+router.post('/update-attendance', Controller.updateAttendanceStatus);
+// router.get('/day/holidays', Controller.getAllHolidays);
+
+// router.get('/holidays',Controller.getHolidayRecords);
+
 module.exports = router;

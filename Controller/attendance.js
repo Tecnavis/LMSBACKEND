@@ -113,3 +113,75 @@ exports.getMonthlyAttendance = async (req, res) => {
     }
   };
   
+
+  exports.updateAttendanceStatus = async (req, res) => {
+    const { fromDate, toDate } = req.body;
+  
+    try {
+      // Convert dates to Date objects
+      const start = new Date(fromDate);
+      const end = new Date(toDate);
+  
+      // Ensure the end date is inclusive
+      end.setDate(end.getDate() + 1);
+  
+      // Update the status of attendance records for all students within the date range
+      await Attendance.updateMany(
+        { date: { $gte: start, $lt: end } },
+        { $set: { status: 'Holiday' } }
+      );
+  
+      res.status(200).send('Attendance updated successfully');
+    } catch (error) {
+      console.error('Error updating attendance:', error);
+      res.status(500).send('Server error');
+    }
+  };
+
+
+// Controller function to get all holidays
+// exports.getAllHolidays = async (req, res) => {
+//   try {
+//     const holidays = await Attendance.find({ status: 'Holiday' });
+//     res.status(200).json(holidays);
+//   } catch (error) {
+//     console.error('Error fetching holidays:', error);
+//     res.status(500).send('Server error');
+//   }
+// };
+
+// Controller to fetch holiday records
+// exports.getHolidayRecords = async (req, res) => {
+//   const { fromDate, toDate } = req.query;
+
+//   // Validate dates
+//   if (!fromDate || isNaN(Date.parse(fromDate)) || !toDate || isNaN(Date.parse(toDate))) {
+//     return res.status(400).json({ message: "Invalid date format" });
+//   }
+
+//   try {
+//     // Convert dates to Date objects
+//     const start = new Date(fromDate);
+//     const end = new Date(toDate);
+
+//     // Ensure the end date is inclusive by adding 1 day to the end date
+//     end.setDate(end.getDate() + 1);
+
+//     // Query to fetch holidays within the date range
+//     const holidays = await Attendance.find({
+//       date: { $gte: start, $lt: end },
+//       status: 'Holiday'
+//     }).populate('student', 'name'); // Populating the student details (optional)
+
+//     // Check if any holidays were found
+//     if (!holidays.length) {
+//       return res.status(404).json({ message: "No holidays found in the given range" });
+//     }
+
+//     // Return the holidays in the response
+//     res.status(200).json(holidays);
+//   } catch (error) {
+//     console.error('Error fetching holiday records:', error);
+//     res.status(500).json({ message: 'Server error while fetching holidays' });
+//   }
+// };

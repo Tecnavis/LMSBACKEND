@@ -1,9 +1,9 @@
 const asyncHandler = require("express-async-handler");
-const Models = require("../Model/expence");
+const ExpenceModel = require("../Model/expence");
 
 
 const getNextReceiptNumber = async () => {
-    const lastRecord = await Models.findOne().sort({ _id: -1 }).limit(1);
+    const lastRecord = await ExpenceModel.findOne().sort({ _id: -1 }).limit(1);
     let nextReceiptNumber = 'REC00001';
     if (lastRecord && lastRecord.receiptNumber) {
       const currentNumber = parseInt(lastRecord.receiptNumber.replace('REC', ''));
@@ -36,7 +36,7 @@ exports.create = asyncHandler(async (req, res) => {
       image = req.file.filename;
     }
   
-    const expence = await Models.create({
+    const expence = await ExpenceModel.create({
       receiptNumber,
       referenceNumber,
       date,
@@ -65,13 +65,13 @@ exports.create = asyncHandler(async (req, res) => {
 
 // Get all payments
 exports.getAll = asyncHandler(async (req, res) => {
-  const expences = await Models.find();
+  const expences = await ExpenceModel.find();
   res.json(expences);
 });
 
 //get expence by id
 exports.getExpenceById = asyncHandler(async (req, res) => {
-  const expence = await Models.findById(req.params.id);
+  const expence = await ExpenceModel.findById(req.params.id);
   if (!expence) {
     res.status(400);
     throw new Error("Expence not found");
@@ -89,7 +89,7 @@ exports.updateExpence = asyncHandler(async (req, res) => {
     description,
     modeOfPayment,
   } = req.body;
-  const expence = await Models.findById(req.params.id);
+  const expence = await ExpenceModel.findById(req.params.id);
   if (!expence) {
     res.status(400);
     throw new Error("Expence not found");
@@ -108,10 +108,43 @@ exports.updateExpence = asyncHandler(async (req, res) => {
 // delete payment by id
 exports.delete = asyncHandler(async (req, res) => {
   try {
-    const payment = await Models.findByIdAndDelete(req.params.id);
+    const payment = await ExpenceModel.findByIdAndDelete(req.params.id);
     if (!payment) return res.status(404).json({ message: "Payment not found" });
     res.status(200).json({ message: "Payment deleted" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
+
+
+
+exports.getMonthlyExpenses = async (req, res) => {
+    try {
+        console.log('Request received for monthly expenses summary');
+        const result = await ExpenceModel.aggregate([
+            {
+                $group: {
+                    _id: { $month: "$date" },
+                    totalExpense: { $sum: "$amount" }
+                }
+            },
+            {
+                $sort: { _id: 1 }
+            }
+        ]).exec();
+
+        console.log('Aggregation result:', result);
+
+        const monthlyExpenses = Array(12).fill(0);
+        result.forEach(item => {
+            monthlyExpenses[item._id - 1] = item.totalExpense;
+        });
+
+        res.json({ monthlyExpenses });
+    } catch (error) {
+        console.error('Error fetching monthly expenses:', error);
+        res.status(500).json({ message: 'Server error', error: error.toString() });
+    }
+};
+
