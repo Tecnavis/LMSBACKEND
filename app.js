@@ -14,6 +14,7 @@ var adminRouter = require('./routes/admin')
 var transactionRouter = require('./routes/transaction')
 var attendanceRouter = require('./routes/attendance')
 var expenceRouter = require('./routes/expence')
+var notesRouter = require('./routes/notes')
 
 var app = express();
 connectDB()
@@ -38,6 +39,7 @@ app.use('/admin',adminRouter)
 app.use('/transaction',transactionRouter)
 app.use('/attendance',attendanceRouter)
 app.use('/expence',expenceRouter)
+app.use('/notes',notesRouter)
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
