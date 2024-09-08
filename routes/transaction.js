@@ -19,4 +19,5 @@ router.get('/',Controller.getAll)
 router.delete('/:id',Controller.delete)
 router.get('/student/:studentId', Controller.getTransactionsByStudent);
 router.delete('/',Controller.deleteAll)
+router.get('/monthly-income', Controller.getMonthlyIncome);
 module.exports = router;

@@ -6,9 +6,6 @@ exports.create = asyncHandler(async (req, res) => {
         console.log('Received data:', req.body); // Log the data received from frontend
 
         const { students,receiptNumber, referenceNumber, date, name, balance, payAmount, modeOfPayment } = req.body;
-
-        // Add any necessary validation or transformation here
-
         const payment = await PaymentModel.create({students, receiptNumber, referenceNumber, date, name, balance, payAmount, modeOfPayment });
         res.status(201).json(payment);
     } catch (error) {
@@ -60,3 +57,22 @@ exports.getTransactionsByStudent = asyncHandler(async (req, res) => {
         res.status(500).json({message:error.message})
     }
 })
+
+
+exports.getMonthlyIncome = asyncHandler(async (req, res) => {
+    try {
+        const incomeData = await PaymentModel.aggregate([
+            {
+                $group: {
+                    _id: { $month: "$date" }, // Group by the month from the 'date' field
+                    totalPayAmount: { $sum: "$payAmount" }, // Sum the 'payAmount' for each month
+                },
+            },
+            { $sort: { _id: 1 } }, // Sort by month (1 = January, 12 = December)
+        ]);
+
+        res.json(incomeData);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
