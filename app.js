@@ -14,6 +14,7 @@ var adminRouter = require('./routes/admin')
 var transactionRouter = require('./routes/transaction')
 var attendanceRouter = require('./routes/attendance')
 var expenceRouter = require('./routes/expence')
+var notesRouter = require('./routes/notes')
 var logsRouter = require('./routes/logsRoute')
 
 var app = express();
@@ -39,7 +40,10 @@ app.use('/admin',adminRouter)
 app.use('/transaction',transactionRouter)
 app.use('/attendance',attendanceRouter)
 app.use('/expence',expenceRouter)
+app.use('/notes',notesRouter)
+
 app.use('/log',logsRouter)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
