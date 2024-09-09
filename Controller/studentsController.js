@@ -47,8 +47,7 @@ exports.getAllStudents = async (req, res) => {
 exports.getStudentById = async (req, res) => {
   try {
     // Populate only selected fields from the 'course' model if needed
-    const student = await Student.findById(req.params.id)
-      .populate('courseName', 'name duration fee') // You can specify fields like 'name duration fee'
+    const student = await Student.findById(req.params.id) // You can specify fields like 'name duration fee'
       .exec();
 
     if (!student) {
