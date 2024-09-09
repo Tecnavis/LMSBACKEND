@@ -14,7 +14,11 @@ var adminRouter = require('./routes/admin')
 var transactionRouter = require('./routes/transaction')
 var attendanceRouter = require('./routes/attendance')
 var expenceRouter = require('./routes/expence')
+<<<<<<< HEAD
 var notesRouter = require('./routes/notes')
+=======
+var logsRouter = require('./routes/logsRoute')
+>>>>>>> 811ce1baf6c490e322e6837f77747ad373b38159
 
 var app = express();
 connectDB()
@@ -39,7 +43,11 @@ app.use('/admin',adminRouter)
 app.use('/transaction',transactionRouter)
 app.use('/attendance',attendanceRouter)
 app.use('/expence',expenceRouter)
+<<<<<<< HEAD
 app.use('/notes',notesRouter)
+=======
+app.use('/log',logsRouter)
+>>>>>>> 811ce1baf6c490e322e6837f77747ad373b38159
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

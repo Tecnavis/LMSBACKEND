@@ -1,5 +1,6 @@
 const Student = require("../Model/studentsModel");
 const bcrypt = require("bcrypt");
+const Logs = require('../Model/logsModel')
 // Calculate age from date of birth
 const calculateAge = (dob) => {
   const diff = Date.now() - new Date(dob).getTime();
@@ -46,13 +47,20 @@ exports.getAllStudents = async (req, res) => {
 // Get a student by ID
 exports.getStudentById = async (req, res) => {
   try {
-    const student = await Student.findById(req.params.id);
-    if (!student) return res.status(404).json({ message: "Student not found" });
+    // Populate only selected fields from the 'course' model if needed
+    const student = await Student.findById(req.params.id) // You can specify fields like 'name duration fee'
+      .exec();
+
+    if (!student) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
     res.status(200).json(student);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // Create a student
 exports.createStudent = async (req, res) => {
@@ -127,6 +135,14 @@ exports.createStudent = async (req, res) => {
     const student = new Student(studentData);
     const newStudent = await student.save();
 
+     // Log success
+     const logEntry = new Logs({
+      log: `${studentData.adminName} created ${studentData.name}.`,
+      time: new Date(),
+      status: "Created",
+    });
+    await logEntry.save();
+
     res.status(201).json(newStudent);
   } catch (err) {
     res.status(400).json({ message: err.message });
@@ -186,7 +202,12 @@ exports.updateStudent = async (req, res) => {
     // Update student in the database
     const updatedStudent = await Student.findByIdAndUpdate(req.params.id, updatedData, { new: true });
     if (!updatedStudent) return res.status(404).json({ message: 'Student not found' });
-
+    const logEntry = new Logs({
+      log: `${updatedData.adminName} updated ${updatedData.name}.`,
+      time: new Date(),
+      status: "Updated",
+    });
+    await logEntry.save();
     res.status(200).json(updatedStudent);
   } catch (err) {
     console.error('Update student error:', err);
@@ -200,15 +221,25 @@ exports.updateStudent = async (req, res) => {
 
 // Delete a student
 exports.deleteStudent = async (req, res) => {
+  const { adminName } = req.query; // Use req.query to access query parameters
+  console.log(adminName);
   try {
     const deletedStudent = await Student.findByIdAndDelete(req.params.id);
     if (!deletedStudent)
       return res.status(404).json({ message: "Student not found" });
+    
+    const logEntry = new Logs({
+      log: `${adminName} deleted ${deletedStudent.name}.`,
+      time: new Date(),
+      status: "Deleted",
+    });
+    await logEntry.save();
     res.status(200).json({ message: "Student deleted" });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
+
 
 // Sign-in student
 exports.signInStudent = async (req, res) => {
