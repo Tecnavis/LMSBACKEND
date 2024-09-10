@@ -17,6 +17,7 @@ var expenceRouter = require('./routes/expence')
 var notesRouter = require('./routes/notes')
 var logsRouter = require('./routes/logsRoute')
 
+
 var app = express();
 connectDB()
 app.use(cors({
@@ -40,6 +41,8 @@ app.use('/admin',adminRouter)
 app.use('/transaction',transactionRouter)
 app.use('/attendance',attendanceRouter)
 app.use('/expence',expenceRouter)
+
+
 app.use('/notes',notesRouter)
 
 app.use('/log',logsRouter)
