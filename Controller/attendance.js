@@ -1,4 +1,5 @@
 const Attendance = require('../Model/attendance');
+const Student = require('../Model/studentsModel')
 
 exports.getAll = async (req, res) => {
   try {
@@ -125,7 +126,36 @@ exports.getMonthlyAttendance = async (req, res) => {
       // Ensure the end date is inclusive
       end.setDate(end.getDate() + 1);
   
-      // Update the status of attendance records for all students within the date range
+      // Fetch all students
+      const students = await Student.find().select('_id'); // Fetch all student IDs
+  
+      if (students.length === 0) {
+        return res.status(400).send('No students found');
+      }
+  
+      // Generate all dates between fromDate and toDate
+      const datesToCheck = [];
+      let currentDate = new Date(start);
+      while (currentDate < end) {
+        datesToCheck.push(new Date(currentDate));
+        currentDate.setDate(currentDate.getDate() + 1);
+      }
+  
+      // Create new records for missing dates
+      const newRecords = datesToCheck.flatMap(date =>
+        students.map(student => ({
+          students: student._id,
+          date,
+          status: 'Holiday'
+        }))
+      );
+  
+      // Insert missing records
+      if (newRecords.length > 0) {
+        await Attendance.insertMany(newRecords);
+      }
+  
+      // Update the status of attendance records within the date range
       await Attendance.updateMany(
         { date: { $gte: start, $lt: end } },
         { $set: { status: 'Holiday' } }
