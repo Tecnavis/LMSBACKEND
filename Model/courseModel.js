@@ -1,8 +1,9 @@
 const mongoose = require('mongoose');
 const courseSchema = new mongoose.Schema({
     name: { type: String  },
-    duration: { type: Number }
+    duration: { type: Number },
+    fee: { type: Number },
 });
 
 
-module.exports = mongoose.model('Course', courseSchema);
+module.exports = mongoose.model('course', courseSchema);
