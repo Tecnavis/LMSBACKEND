@@ -24,10 +24,10 @@ connectDB()
 //   origin:'https://lms.tecnavis.com/,http://localhost:3000'
 // }))
 app.use(cors({
-  origin: ["http://localhost:3000",'https://lms.tecnavis.com'],
-  method:["PUT","DELETE","PUSH","GET","POST","PATCH"],
-  credential:true
-}))
+  origin: '*', // Allow all origins temporarily for testing
+  methods: '*', // Allow all methods temporarily for testing
+  credentials: true
+}));
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
