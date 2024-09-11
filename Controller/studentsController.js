@@ -370,3 +370,46 @@ exports.updateStudentBalance = async (req, res) => {
   }
 };
 
+//  activate student 
+
+exports.activateStudent = async(req,res)=>{
+  try {
+    const student = await Student.findById(req.params.id);
+    
+    if (!student) {
+        return res.status(404).send({ error: 'Student not found' });
+    }
+    
+    // Set active status to true
+    student.active = true;
+    await student.save();
+    
+    res.send({ success: true, active: student.active });
+} catch (error) {
+    res.status(500).send({ error: 'Something went wrong' });
+}
+}
+
+
+// Deactivate 
+
+
+exports.deactivate = async(req,res)=>{
+  try {
+    const student = await Student.findById(req.params.id);
+    
+    if (!student) {
+        return res.status(404).send({ error: 'Student not found' });
+    }
+    
+    // Set active status to true
+    student.active = false;
+    await student.save();
+    
+    res.send({ success: true, active: student.active });
+} catch (error) {
+    res.status(500).send({ error: 'Something went wrong' });
+}
+}
+
+
