@@ -24,7 +24,7 @@ connectDB()
 //   origin:'https://lms.tecnavis.com/,http://localhost:3000'
 // }))
 app.use(cors({
-  origin: ["http://localhost:3000",'https://lms.tecnavis.com/'],
+  origin: ["http://localhost:3000",'https://lms.tecnavis.com'],
   method:["PUT","DELETE","PUSH","GET"],
   credential:true
 }))
