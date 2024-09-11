@@ -20,8 +20,13 @@ var logsRouter = require('./routes/logsRoute')
 
 var app = express();
 connectDB()
+// app.use(cors({
+//   origin:'https://lms.tecnavis.com/,http://localhost:3000'
+// }))
 app.use(cors({
-  origin:'*'
+  origin: ["http://localhost:3000",'https://lms.tecnavis.com'],
+  method:["PUT","DELETE","PUSH","GET","POST","PATCH"],
+  credential:true
 }))
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
