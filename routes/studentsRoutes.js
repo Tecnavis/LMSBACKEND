@@ -39,5 +39,7 @@ router.put('/:id', Authentication, upload.fields([{ name: 'image', maxCount: 1 }
 router.delete('/:id',Authentication, studentController.deleteStudent);
 router.post('/signin',Authentication,studentController.signInStudent)
 router.patch('/:id',Authentication,studentController.updateStudentBalance);
+router.put('/activate/:id',Authentication,studentController.activateStudent)
+router.put('/deactivate/:id',Authentication,studentController.deactivate)
 
 module.exports = router;

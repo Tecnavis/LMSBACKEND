@@ -26,7 +26,8 @@ const studentSchema = new mongoose.Schema({
     courseFee: { type: Number  },
     guardianId: { type: String  },
     studentId: { type: String  },
-    token:{type: String}
+    token:{type: String},
+    active:{type:Boolean, default:true}
 });
 
 studentSchema.pre('save', async function(next) {
