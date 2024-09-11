@@ -25,7 +25,7 @@ connectDB()
 // }))
 app.use(cors({
   origin: ["http://localhost:3000",'https://lms.tecnavis.com'],
-  method:["PUT","DELETE","PUSH","GET"],
+  method:["PUT","DELETE","PUSH","GET","POST","PATCH"],
   credential:true
 }))
 // view engine setup
