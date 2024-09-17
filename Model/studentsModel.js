@@ -12,7 +12,7 @@ const studentSchema = new mongoose.Schema({
     bloodGroup: { type: String  },
     guardianName: { type: String  },
     guardianRelation: { type: String  },
-    dateOfBirth: { type: Date  },
+    dateOfBirth: { type: Date },
     age: { type: Number },
     password:{type:String},
     gender: { type: String  },

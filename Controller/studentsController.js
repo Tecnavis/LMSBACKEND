@@ -125,12 +125,10 @@ exports.createStudent = async (req, res) => {
 
     // Generate password using date of birth in DDMMYYYY format
     const dateOfBirth = new Date(studentData.dateOfBirth);
-    console.log(dateOfBirth, "this is the date of birth");
     const day = ("0" + dateOfBirth.getDate()).slice(-2);
     const month = ("0" + (dateOfBirth.getMonth() + 1)).slice(-2);
     const year = dateOfBirth.getFullYear();
     studentData.password = `${day}${month}${year}`;
-    console.log(studentData.password, "the password");
 
     const student = new Student(studentData);
     const newStudent = await student.save();
@@ -153,6 +151,7 @@ exports.createStudent = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   try {
     const updatedData = req.body;
+    console.log(req.body, 'this is the req.body');
 
     // Validate mobile number if provided
     let mobileNumber = updatedData.mobileNumber ? updatedData.mobileNumber.trim() : null;
@@ -161,7 +160,7 @@ exports.updateStudent = async (req, res) => {
     let parentsMobileNumber = updatedData.parentsMobileNumber
       ? updatedData.parentsMobileNumber.trim()
       : null;
- 
+
     if (mobileNumber && !isValidMobileNumber(mobileNumber)) {
       return res.status(400).json({ message: "Invalid mobile number. Must be a 10-digit number." });
     }
@@ -179,6 +178,13 @@ exports.updateStudent = async (req, res) => {
       updatedData.joinDate = null;
     } else {
       updatedData.joinDate = new Date(updatedData.joinDate);
+    }
+
+    // Sanitize dateOfBirth
+    if (updatedData.dateOfBirth === 'null' || !Date.parse(updatedData.dateOfBirth)) {
+      updatedData.dateOfBirth = null;
+    } else {
+      updatedData.dateOfBirth = new Date(updatedData.dateOfBirth);
     }
 
     // Handle file uploads
@@ -202,18 +208,21 @@ exports.updateStudent = async (req, res) => {
     // Update student in the database
     const updatedStudent = await Student.findByIdAndUpdate(req.params.id, updatedData, { new: true });
     if (!updatedStudent) return res.status(404).json({ message: 'Student not found' });
+
     const logEntry = new Logs({
       log: `${updatedData.adminName} updated ${updatedData.name}.`,
       time: new Date(),
       status: "Updated",
     });
     await logEntry.save();
+
     res.status(200).json(updatedStudent);
   } catch (err) {
     console.error('Update student error:', err);
     res.status(500).json({ message: err.message });
   }
 };
+
 
 
 
