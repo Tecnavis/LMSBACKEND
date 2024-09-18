@@ -12,7 +12,7 @@ const studentSchema = new mongoose.Schema({
     bloodGroup: { type: String  },
     guardianName: { type: String  },
     guardianRelation: { type: String  },
-    dateOfBirth: { type: Date  },
+    dateOfBirth: { type: Date },
     age: { type: Number },
     password:{type:String},
     gender: { type: String  },
@@ -26,7 +26,8 @@ const studentSchema = new mongoose.Schema({
     courseFee: { type: Number  },
     guardianId: { type: String  },
     studentId: { type: String  },
-    token:{type: String}
+    token:{type: String},
+    active:{type:Boolean, default:true}
 });
 
 studentSchema.pre('save', async function(next) {
