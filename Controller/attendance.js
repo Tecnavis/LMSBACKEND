@@ -114,7 +114,6 @@ exports.getMonthlyAttendance = async (req, res) => {
     }
   };
   
-
   exports.updateAttendanceStatus = async (req, res) => {
     const { fromDate, toDate } = req.body;
   
@@ -122,9 +121,7 @@ exports.getMonthlyAttendance = async (req, res) => {
       // Convert dates to Date objects
       const start = new Date(fromDate);
       const end = new Date(toDate);
-  
-      // Ensure the end date is inclusive
-      end.setDate(end.getDate() + 1);
+      end.setDate(end.getDate() + 1); // Include the 'toDate'
   
       // Fetch all students
       const students = await Student.find().select('_id'); // Fetch all student IDs
@@ -133,7 +130,6 @@ exports.getMonthlyAttendance = async (req, res) => {
         return res.status(400).send('No students found');
       }
   
-      // Generate all dates between fromDate and toDate
       const datesToCheck = [];
       let currentDate = new Date(start);
       while (currentDate < end) {
@@ -141,23 +137,32 @@ exports.getMonthlyAttendance = async (req, res) => {
         currentDate.setDate(currentDate.getDate() + 1);
       }
   
-      // Create new records for missing dates
-      const newRecords = datesToCheck.flatMap(date =>
-        students.map(student => ({
-          students: student._id,
-          date,
-          status: 'Holiday'
-        }))
-      );
+      // Check for existing holidays
+      const existingHolidayRecords = await Attendance.find({
+        date: { $in: datesToCheck },
+        status: 'Holiday',
+      });
   
-      // Insert missing records
+      const existingHolidayDates = new Set(existingHolidayRecords.map(record => record.date.toISOString()));
+  
+      // Create new holiday records only for non-holiday dates
+      const newRecords = datesToCheck
+        .filter(date => !existingHolidayDates.has(date.toISOString())) // Filter out dates that already have holidays
+        .flatMap(date =>
+          students.map(student => ({
+            students: student._id,
+            date,
+            status: 'Holiday'
+          }))
+        );
+  
       if (newRecords.length > 0) {
         await Attendance.insertMany(newRecords);
       }
   
-      // Update the status of attendance records within the date range
+      // Update the status to 'Holiday' only for non-holiday dates
       await Attendance.updateMany(
-        { date: { $gte: start, $lt: end } },
+        { date: { $gte: start, $lt: end }, status: { $ne: 'Holiday' } }, // Skip dates where the status is already 'Holiday'
         { $set: { status: 'Holiday' } }
       );
   
@@ -167,6 +172,53 @@ exports.getMonthlyAttendance = async (req, res) => {
       res.status(500).send('Server error');
     }
   };
+  
+  // exports.updateAttendanceStatus = async (req, res) => {
+  //   const { fromDate, toDate } = req.body;
+  
+  //   try {
+  //     // Convert dates to Date objects
+  //     const start = new Date(fromDate);
+  //     const end = new Date(toDate);
+  //     end.setDate(end.getDate() + 1);
+  
+  //     // Fetch all students
+  //     const students = await Student.find().select('_id'); // Fetch all student IDs
+  
+  //     if (students.length === 0) {
+  //       return res.status(400).send('No students found');
+  //     }
+  
+  //     const datesToCheck = [];
+  //     let currentDate = new Date(start);
+  //     while (currentDate < end) {
+  //       datesToCheck.push(new Date(currentDate));
+  //       currentDate.setDate(currentDate.getDate() + 1);
+  //     }
+  
+  //     const newRecords = datesToCheck.flatMap(date =>
+  //       students.map(student => ({
+  //         students: student._id,
+  //         date,
+  //         status: 'Holiday'
+  //       }))
+  //     );
+  
+  //     if (newRecords.length > 0) {
+  //       await Attendance.insertMany(newRecords);
+  //     }
+  
+  //     await Attendance.updateMany(
+  //       { date: { $gte: start, $lt: end } },
+  //       { $set: { status: 'Holiday' } }
+  //     );
+  
+  //     res.status(200).send('Attendance updated successfully');
+  //   } catch (error) {
+  //     console.error('Error updating attendance:', error);
+  //     res.status(500).send('Server error');
+  //   }
+  // };
 
 
 // Controller function to get all holidays

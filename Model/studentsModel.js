@@ -27,9 +27,9 @@ const studentSchema = new mongoose.Schema({
     guardianId: { type: String  },
     studentId: { type: String  },
     token:{type: String},
-    active:{type:Boolean, default:true}
+    active:{type:Boolean, default:true},
+    deactivationReason: { type: String, default: null } 
 });
-
 studentSchema.pre('save', async function(next) {
     const student = this;
     
