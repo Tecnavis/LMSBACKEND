@@ -408,25 +408,7 @@ exports.activateStudent = async (req, res) => {
   }
 };
 
-// Deactivate
-
-// exports.deactivate = async(req,res)=>{
-//   try {
-//     const student = await Student.findById(req.params.id);
-
-//     if (!student) {
-//         return res.status(404).send({ error: 'Student not found' });
-//     }
-
-//     student.active = false;
-//     await student.save();
-
-//     res.send({ success: true, active: student.active });
-// } catch (error) {
-//     res.status(500).send({ error: 'Something went wrong' });
-// }
-// }
-
+//  deactivate student
 exports.deactivate = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
