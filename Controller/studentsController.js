@@ -1,6 +1,6 @@
 const Student = require("../Model/studentsModel");
 const bcrypt = require("bcrypt");
-const Logs = require('../Model/logsModel')
+const Logs = require("../Model/logsModel");
 // Calculate age from date of birth
 const calculateAge = (dob) => {
   const diff = Date.now() - new Date(dob).getTime();
@@ -60,7 +60,6 @@ exports.getStudentById = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // Create a student
 exports.createStudent = async (req, res) => {
@@ -133,8 +132,8 @@ exports.createStudent = async (req, res) => {
     const student = new Student(studentData);
     const newStudent = await student.save();
 
-     // Log success
-     const logEntry = new Logs({
+    // Log success
+    const logEntry = new Logs({
       log: `${studentData.adminName} created ${studentData.name}.`,
       time: new Date(),
       status: "Created",
@@ -151,10 +150,12 @@ exports.createStudent = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   try {
     const updatedData = req.body;
-    console.log(req.body, 'this is the req.body');
+    console.log(req.body, "this is the req.body");
 
     // Validate mobile number if provided
-    let mobileNumber = updatedData.mobileNumber ? updatedData.mobileNumber.trim() : null;
+    let mobileNumber = updatedData.mobileNumber
+      ? updatedData.mobileNumber.trim()
+      : null;
 
     // Validate parents' mobile number if provided
     let parentsMobileNumber = updatedData.parentsMobileNumber
@@ -162,26 +163,34 @@ exports.updateStudent = async (req, res) => {
       : null;
 
     if (mobileNumber && !isValidMobileNumber(mobileNumber)) {
-      return res.status(400).json({ message: "Invalid mobile number. Must be a 10-digit number." });
+      return res
+        .status(400)
+        .json({ message: "Invalid mobile number. Must be a 10-digit number." });
     }
 
     // Check if mobile number already exists
     if (mobileNumber) {
-      const existingStudent = await Student.findOne({ mobileNumber, _id: { $ne: req.params.id } });
+      const existingStudent = await Student.findOne({
+        mobileNumber,
+        _id: { $ne: req.params.id },
+      });
       if (existingStudent) {
         return res.status(401).json({ message: "Mobile number already used." });
       }
     }
 
     // Sanitize joinDate
-    if (updatedData.joinDate === 'null' || !Date.parse(updatedData.joinDate)) {
+    if (updatedData.joinDate === "null" || !Date.parse(updatedData.joinDate)) {
       updatedData.joinDate = null;
     } else {
       updatedData.joinDate = new Date(updatedData.joinDate);
     }
 
     // Sanitize dateOfBirth
-    if (updatedData.dateOfBirth === 'null' || !Date.parse(updatedData.dateOfBirth)) {
+    if (
+      updatedData.dateOfBirth === "null" ||
+      !Date.parse(updatedData.dateOfBirth)
+    ) {
       updatedData.dateOfBirth = null;
     } else {
       updatedData.dateOfBirth = new Date(updatedData.dateOfBirth);
@@ -190,13 +199,13 @@ exports.updateStudent = async (req, res) => {
     // Handle file uploads
     if (req.files) {
       if (req.files.image) {
-        updatedData.image = req.files['image'][0].filename;
+        updatedData.image = req.files["image"][0].filename;
       }
       if (req.files.guardianId) {
-        updatedData.guardianId = req.files['guardianId'][0].filename;
+        updatedData.guardianId = req.files["guardianId"][0].filename;
       }
       if (req.files.studentId) {
-        updatedData.studentId = req.files['studentId'][0].filename;
+        updatedData.studentId = req.files["studentId"][0].filename;
       }
     }
 
@@ -206,8 +215,13 @@ exports.updateStudent = async (req, res) => {
     }
 
     // Update student in the database
-    const updatedStudent = await Student.findByIdAndUpdate(req.params.id, updatedData, { new: true });
-    if (!updatedStudent) return res.status(404).json({ message: 'Student not found' });
+    const updatedStudent = await Student.findByIdAndUpdate(
+      req.params.id,
+      updatedData,
+      { new: true }
+    );
+    if (!updatedStudent)
+      return res.status(404).json({ message: "Student not found" });
 
     const logEntry = new Logs({
       log: `${updatedData.adminName} updated ${updatedData.name}.`,
@@ -218,15 +232,10 @@ exports.updateStudent = async (req, res) => {
 
     res.status(200).json(updatedStudent);
   } catch (err) {
-    console.error('Update student error:', err);
+    console.error("Update student error:", err);
     res.status(500).json({ message: err.message });
   }
 };
-
-
-
-
-
 
 // Delete a student
 exports.deleteStudent = async (req, res) => {
@@ -236,7 +245,7 @@ exports.deleteStudent = async (req, res) => {
     const deletedStudent = await Student.findByIdAndDelete(req.params.id);
     if (!deletedStudent)
       return res.status(404).json({ message: "Student not found" });
-    
+
     const logEntry = new Logs({
       log: `${adminName} deleted ${deletedStudent.name}.`,
       time: new Date(),
@@ -248,7 +257,6 @@ exports.deleteStudent = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 // Sign-in student
 exports.signInStudent = async (req, res) => {
@@ -372,53 +380,50 @@ exports.updateStudentBalance = async (req, res) => {
     student.balance = balance;
     student.courseFee = balance;
     await student.save();
-    res.status(200).json({ message: "Student balance and course fee updated successfully" });
+    res
+      .status(200)
+      .json({ message: "Student balance and course fee updated successfully" });
   } catch (error) {
-    console.error('Error updating student balance:', error);
+    console.error("Error updating student balance:", error);
     res.status(500).json({ message: "Error updating student balance", error });
   }
 };
 
-//  activate student 
+//  activate student
 
-exports.activateStudent = async(req,res)=>{
+exports.activateStudent = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
-    
+
     if (!student) {
-        return res.status(404).send({ error: 'Student not found' });
+      return res.status(404).send({ error: "Student not found" });
     }
-    
-    // Set active status to true
+
     student.active = true;
     await student.save();
-    
+
     res.send({ success: true, active: student.active });
-} catch (error) {
-    res.status(500).send({ error: 'Something went wrong' });
-}
-}
+  } catch (error) {
+    res.status(500).send({ error: "Something went wrong" });
+  }
+};
 
-
-// Deactivate 
-
-
-exports.deactivate = async(req,res)=>{
+//  deactivate student
+exports.deactivate = async (req, res) => {
   try {
     const student = await Student.findById(req.params.id);
-    
+
     if (!student) {
-        return res.status(404).send({ error: 'Student not found' });
+      return res.status(404).send({ error: "Student not found" });
     }
-    
-    // Set active status to true
+
+    // Set active status to false and save the deactivation reason
     student.active = false;
+    student.deactivationReason = req.body.reason; // Get reason from request body
     await student.save();
-    
+
     res.send({ success: true, active: student.active });
-} catch (error) {
-    res.status(500).send({ error: 'Something went wrong' });
-}
-}
-
-
+  } catch (error) {
+    res.status(500).send({ error: "Something went wrong" });
+  }
+};
