@@ -412,7 +412,7 @@ exports.deactivate = async (req, res) => {
       return res.status(404).send({ error: "Student not found" });
     }
 
-    // Set active status to false and save the deactivation reason
+    // Set active status to false and save the deactivation reason.
     student.active = false;
     student.deactivationReason = req.body.reason; // Get reason from request body
     await student.save();
