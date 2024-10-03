@@ -2,14 +2,14 @@ const PaymentModel = require('../Model/transaction')
 const asyncHandler = require("express-async-handler");
 const Logs = require('../Model/logsModel')
 
+
 exports.create = asyncHandler(async (req, res) => {
     try {
-        console.log('Received data:', req.body); // Log the data received from frontend
 
         const { students,receiptNumber, referenceNumber, date, name, balance, payAmount, modeOfPayment, adminName } = req.body;
         const payment = await PaymentModel.create({students, receiptNumber, referenceNumber, date, name, balance, payAmount, modeOfPayment });
         const logEntry = new Logs({
-            log: `${adminName} recived ₹${payAmount} from ${name} by ${modeOfPayment}`,
+            log: `${adminName} received ₹${payAmount} from ${name} by ${modeOfPayment}`,
             time: new Date(),
             status: "Created"
           });
