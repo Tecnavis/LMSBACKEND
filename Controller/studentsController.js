@@ -150,7 +150,6 @@ exports.createStudent = async (req, res) => {
 exports.updateStudent = async (req, res) => {
   try {
     const updatedData = req.body;
-    console.log(req.body, "this is the req.body");
 
     // Validate mobile number if provided
     let mobileNumber = updatedData.mobileNumber
@@ -240,7 +239,6 @@ exports.updateStudent = async (req, res) => {
 // Delete a student
 exports.deleteStudent = async (req, res) => {
   const { adminName } = req.query; // Use req.query to access query parameters
-  console.log(adminName);
   try {
     const deletedStudent = await Student.findByIdAndDelete(req.params.id);
     if (!deletedStudent)
@@ -322,13 +320,11 @@ exports.uploadExcel = async (req, res) => {
     }
 
     const filePath = req.file.path;
-    console.log("File path:", filePath);
 
     const workbook = XLSX.readFile(filePath);
     const sheetName = workbook.SheetNames[0];
     const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 
-    console.log("Sheet data:", sheetData);
 
     const students = sheetData.map((data) => {
       return {
@@ -357,7 +353,6 @@ exports.uploadExcel = async (req, res) => {
       };
     });
 
-    console.log("Parsed students:", students);
 
     await Student.insertMany(students);
 
@@ -417,7 +412,7 @@ exports.deactivate = async (req, res) => {
       return res.status(404).send({ error: "Student not found" });
     }
 
-    // Set active status to false and save the deactivation reason
+    // Set active status to false and save the deactivation reason.
     student.active = false;
     student.deactivationReason = req.body.reason; // Get reason from request body
     await student.save();
