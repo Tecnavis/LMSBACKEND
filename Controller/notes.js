@@ -2,8 +2,16 @@ const Modal = require('../Model/notes')
 
 //create notes
 exports.create = async (req, res) => {
+    const {priority, description, title, date, name} = req.body
     try {
-        const note = await Modal.create(req.body);
+        const note = await Modal.create({
+            priority,
+            description,
+            title,
+            name,
+            date
+
+        });
         res.status(201).json(note);
     } catch (error) {
         res.status(400).json({ message: error.message });
