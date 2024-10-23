@@ -16,6 +16,7 @@ var attendanceRouter = require('./routes/attendance')
 var expenceRouter = require('./routes/expence')
 var notesRouter = require('./routes/notes')
 var logsRouter = require('./routes/logsRoute')
+var examRouter = require('./routes/examRoutes')
 
 
 var app = express();
@@ -46,6 +47,7 @@ app.use('/admin',adminRouter)
 app.use('/transaction',transactionRouter)
 app.use('/attendance',attendanceRouter)
 app.use('/expence',expenceRouter)
+app.use('/exam',examRouter)
 
 
 app.use('/notes',notesRouter)

@@ -16,8 +16,10 @@ router.get('/last-receipt-number', async (req, res) => {
 
 router.post('/',Authentication,Controller.create)
 router.get('/',Controller.getAll)
-router.delete('/:id',Controller.delete)
+router.delete('/:id',Controller.delteTransaction)
 router.get('/student/:studentId', Controller.getTransactionsByStudent);
-router.delete('/',Controller.deleteAll)
+router.get('/:id',Authentication,Controller.getTranstactionById)
+// router.delete('/',Controller.deleteAll)
 router.get('/monthly-income', Controller.getMonthlyIncome);
+router.put('/:id',Controller.UpdateTransaction)
 module.exports = router;
