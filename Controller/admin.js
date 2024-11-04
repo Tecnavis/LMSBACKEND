@@ -2,9 +2,11 @@ const asyncHandler = require("express-async-handler");
 const Models = require("../Model/admins");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+
+
 exports.create = asyncHandler(async (req, res) => {
   const { name, email, password, role, phone } = req.body;
-  const image = req.file.filename
+  const image = req.file ? req.file.filename : null; // Check if file is uploaded
   if (!name || !email || !password || !role || !phone) {
     res.status(400);
     throw new Error("Please add all fields");
@@ -16,8 +18,9 @@ exports.create = asyncHandler(async (req, res) => {
     password,
     role,
     phone,
-    image
+    image, // This will be null if no image is uploaded
   });
+
   if (admin) {
     res.status(201).json({
       _id: admin._id,
@@ -25,13 +28,14 @@ exports.create = asyncHandler(async (req, res) => {
       email: admin.email,
       role: admin.role,
       phone: admin.phone,
-      image: admin.image
+      image: admin.image,
     });
   } else {
     res.status(400);
     throw new Error("Admin not created");
   }
 });
+
 //get Admin
 
 exports.getAdmin = asyncHandler(async (req, res) => {
